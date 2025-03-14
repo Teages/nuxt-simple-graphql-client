@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.3
+
+[compare changes](https://github.com/teages/nuxt-simple-graphql-client/compare/v0.0.2...v0.0.3)
+
+### 🏡 Chore
+
+- Replace `graphql` with light replacement ([00333f8](https://github.com/teages/nuxt-simple-graphql-client/commit/00333f8))
+
+### ❤️ Contributors
+
+- Teages ([@Teages](https://github.com/Teages))
+
 ## v0.0.2
 
 [compare changes](https://github.com/teages/nuxt-simple-graphql-client/compare/v0.0.1...v0.0.2)
