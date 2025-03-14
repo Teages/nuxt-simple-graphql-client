@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   modules: ['@gqfn/nuxt', module],
   gqfn: {
     clients: [
-      'https://graphql-test.teages.xyz/graphql-user',
+      'http://localhost:64961/graphql',
     ],
   },
 })
