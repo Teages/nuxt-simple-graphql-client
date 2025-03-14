@@ -43,5 +43,7 @@ jobs:
       - name: Playground prepare
         run: npm run dev:prepare
 
+      - name: Install Playwright Browsers
+        run: pnpx playwright install --with-deps
       - name: Test
         run: npm run test
