@@ -1,12 +1,12 @@
 import type { MaybeRefOrGetter } from '#imports'
+import type { DocumentNode } from '@0no-co/graphql.web'
 import type { ClientOptions } from '@teages/oh-my-graphql'
-import type { DocumentNode } from 'graphql'
 import type { ClientOptions as WSClientOptions } from 'graphql-ws'
 import type { ResultOf, TypedDocumentNode, VariablesOf } from '../types/graphql'
 import { toValue } from '#imports'
+import { Kind, print } from '@0no-co/graphql.web'
 import { createClient } from '@teages/oh-my-graphql'
 import { destr } from 'destr'
-import { Kind, print } from 'graphql'
 import { createClient as createWSClient } from 'graphql-ws'
 
 export function createHandler(options?: HandlerOptions) {

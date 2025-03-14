@@ -30,9 +30,9 @@
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
+    "@0no-co/graphql.web": "^1.1.2",
     "@nuxt/kit": "^3.16.0",
-    "@teages/oh-my-graphql": "^0.1.0",
-    "graphql": "^16.10.0",
+    "@teages/oh-my-graphql": "^0.1.1",
     "graphql-ws": "^6.0.4"
   },
   "devDependencies": {
@@ -50,6 +50,7 @@
     "@types/ws": "^8.18.0",
     "changelogen": "^0.6.1",
     "eslint": "^9.22.0",
+    "graphql": "^16.10.0",
     "graphql-yoga": "^5.13.1",
     "nuxt": "^3.16.0",
     "typescript": "~5.8.2",
