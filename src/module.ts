@@ -6,7 +6,7 @@ export interface ModuleOptions {}
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: '@teages/nuxt-simple-graphql-client',
-    configKey: 'myModule',
+    configKey: 'simpleGraphqlClient',
   },
   // Default configuration options of the Nuxt module
   defaults: {},
