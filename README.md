@@ -1,12 +1,3 @@
-<!--
-Get your module up and running quickly.
-
-Find and replace all on all files (CMD+SHIFT+F):
-- Name: Nuxt Simple GraphQL Client
-- Package name: @teages/nuxt-simple-graphql-client
-- Description: My new Nuxt module
--->
-
 # Nuxt Simple GraphQL Client
 
 [![npm version][npm-version-src]][npm-version-href]
@@ -17,7 +8,7 @@ Find and replace all on all files (CMD+SHIFT+F):
 A simple GraphQL client for Nuxt.
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
-<!-- - [🏀 Online playground](https://stackblitz.com/github/teages/nuxt-simple-graphql-client?file=playground%2Fapp.vue) -->
+- [🏀 Online playground](https://stackblitz.com/github/teages/nuxt-simple-graphql-client?file=playground%2Fapp.vue)
 <!-- - [📖 &nbsp;Documentation](https://example.com) -->
 
 ## Features
