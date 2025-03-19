@@ -1,9 +1,10 @@
 import type { AsyncData, AsyncDataOptions, KeysOf, PickFrom } from '#app/composables/asyncData'
-import type { MaybeRefOrGetter, Ref } from '#imports'
+import type { MaybeRefOrGetter } from '#imports'
 import type { ClientOptions as OMGOptions } from '@teages/oh-my-graphql'
 import type { ClientOptions as WSClientOptions } from 'graphql-ws'
 import type { ComputedRef } from 'vue'
 import type { TypedDocumentNode } from '../../../types/graphql'
+import type { RequireRefOrGetter } from '../../vue'
 
 export type { OMGOptions }
 
@@ -169,7 +170,7 @@ export interface DefineAsyncQueryReturnFn<Ret, TVars, Options> {
     options?: Omit<Options, 'watch'> // Force to use getter if watched.
   ): Ret
   (
-    variables: Ref<TVars> | (() => TVars),
+    variables: RequireRefOrGetter<TVars>,
     options?: Options
   ): Ret
 }
@@ -179,7 +180,7 @@ export interface DefineAsyncQueryReturnFnE<Ret, TVars, Options> {
     options?: Omit<Options, 'watch'> // Force to use getter if watched.
   ): Ret
   (
-    variables?: Ref<TVars> | (() => TVars),
+    variables?: RequireRefOrGetter<TVars>,
     options?: Options
   ): Ret
 }
