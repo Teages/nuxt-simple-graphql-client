@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UserFragment } from '~/components/UserMeta.vue'
 
-const { client, schema } = helloApi
+const { client, schema } = api()
 
 const nameList = ['Alice', 'Bob', 'Charlie', 'Teages']
 const index = ref(0)

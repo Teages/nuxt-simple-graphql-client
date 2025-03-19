@@ -1,5 +1,5 @@
 <script lang="ts">
-const { schema } = helloApi
+const { schema } = api()
 
 export type RequireUserFragment = RequireOperationPartialData<typeof UserFragment>
 

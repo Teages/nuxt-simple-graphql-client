@@ -1,4 +1,4 @@
-const { client, schema } = helloApi
+const { client, schema } = api()
 
 /**
  * Same as:
