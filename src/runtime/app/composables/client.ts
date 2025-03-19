@@ -5,7 +5,6 @@ import type { ResultOf, TypedDocumentNode, VariablesOf } from '../../types/graph
 import { useState } from '#app'
 import { useAsyncData } from '#app/composables/asyncData'
 import { readonly, toValue, watch } from '#imports'
-import { hash } from 'ohash'
 import { createHandler, createSubscriptionHandler, getDocumentType } from '../../utils/client'
 
 type DefaultSubscriptionHandlerOptions = WSOptions & SSEOptions
@@ -81,7 +80,7 @@ export function useGraphQLClient<
       variables?: MaybeRefOrGetter<VariablesOf<typeof document>>,
       options?: any,
     ) => {
-      const key = hash({ document, variables })
+      const key = useId()
 
       return useAsyncData(
         key,
@@ -112,7 +111,7 @@ export function useGraphQLClient<
       variables?: MaybeRefOrGetter<VariablesOf<typeof document>>,
       options?: any,
     ) => {
-      const key = hash({ document, variables })
+      const key = useId()
 
       return useAsyncData(
         key,
@@ -143,11 +142,7 @@ export function useGraphQLClient<
     }
 
     return async (variables?: any, contextRewrite?: any) => {
-      const key = import.meta.client
-        ? crypto.randomUUID()
-        // the function should not call in SSR,
-        // but it's better to have a unique key as fallback
-        : hash({ document, variables })
+      const key = useId()
       const cache = useState<ResultOf<typeof document> | undefined>(key, () => undefined)
       const error = useState<Error | null>(`${key}-error`, () => null)
       const state = useState<'pending' | 'connected' | 'closed'>(`${key}-state`, () => 'pending')
