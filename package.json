@@ -10,6 +10,10 @@
     ".": {
       "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
+    },
+    "./runtime/types/*": {
+      "types": "./dist/runtime/types/*.d.ts",
+      "import": "./dist/runtime/types/*.js"
     }
   },
   "main": "./dist/module.mjs",
@@ -33,6 +37,7 @@
     "@0no-co/graphql.web": "^1.1.2",
     "@nuxt/kit": "^3.16.0",
     "@teages/oh-my-graphql": "^0.1.1",
+    "graphql-sse": "^2.5.4",
     "graphql-ws": "^6.0.4"
   },
   "devDependencies": {

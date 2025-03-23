@@ -1,97 +1,64 @@
 import type { AsyncData, AsyncDataOptions, KeysOf, PickFrom } from '#app/composables/asyncData'
 import type { MaybeRefOrGetter } from '#imports'
-import type { ClientOptions as OMGOptions } from '@teages/oh-my-graphql'
-import type { ClientOptions as WSClientOptions } from 'graphql-ws'
-import type { ComputedRef } from 'vue'
-import type { TypedDocumentNode } from '../../../types/graphql'
-import type { RequireRefOrGetter } from '../../vue'
+import type { Ref, ShallowRef } from 'vue'
+import type { TypedDocumentNode } from '../../graphql'
+import type { BuildInClientOptions, BuildInSSEClientOptions, BuildInWSClientOptions } from '~/src/runtime/shared/utils/build-in'
+import type { GraphQLClientBuilder, GraphQLSubscriptionClientBuilder } from '~/src/runtime/types/client'
 
-export type { OMGOptions }
-
-export interface SSEOptions {
-  sseOptions?: MaybeRefOrGetter<EventSourceInit>
-}
-
-export interface WSOptions {
-  wsOptions?: MaybeRefOrGetter<Omit<WSClientOptions, 'url'>>
-}
-
+export type UseGraphQLSubscriptionClientOptions<SubscriptionContext> =
+  | {
+    /**
+     * Override the default subscription handler.
+     * By default it use EventSource
+     * - `GraphQLSubscriptionClientBuilder`: your custom subscription handler
+     * - `ws`: use handler from `graphql-ws`
+     * - `sse`: use handler from `graphql-sse` (default)
+     *
+     * @default 'sse'
+     */
+    handler?: 'sse'
+    options?: BuildInSSEClientOptions
+  }
+  | {
+    /**
+     * Override the default subscription handler.
+     * By default it use EventSource
+     * - `GraphQLSubscriptionClientBuilder`: your custom subscription handler
+     * - `ws`: use handler from `graphql-ws`
+     * - `sse`: use handler from `graphql-sse` (default)
+     *
+     * @default 'sse'
+     */
+    handler: 'ws'
+    options?: BuildInWSClientOptions
+  }
+  | {
+    /**
+     * Override the default subscription handler.
+     * By default it use EventSource
+     * - `GraphQLSubscriptionClientBuilder`: your custom subscription handler
+     * - `ws`: use handler from `graphql-ws`
+     * - `sse`: use handler from `graphql-sse` (default)
+     *
+     * @default 'sse'
+     */
+    handler: GraphQLSubscriptionClientBuilder<SubscriptionContext>
+  }
 export interface UseGraphQLClientOptions<
-  Context,
+  ClientContext,
   SubscriptionContext,
 > {
-  handler?: RequestHandler<Context> | OMGOptions
-  subscription?:
-    | ({
-      /**
-       * Override the default subscription handler.
-       * By default it use EventSource
-       * - `SubscriptionHandler`: Custom subscription handler.
-       * - `ws`: Use websocket handler from package `graphql-ws`.
-       * - `sse`: Use default sse handler.
-       */
-      handler?: 'sse'
-    } & SSEOptions)
-    | ({
-      /**
-       * Override the default subscription handler.
-       * By default it use EventSource
-       * - `SubscriptionHandler`: Custom subscription handler.
-       * - `ws`: Use websocket handler from package `graphql-ws`.
-       * - `sse`: Use default sse handler.
-       */
-      handler: 'ws'
-    } & WSOptions)
-    | {
-      /**
-       * Override the default subscription handler.
-       * By default it use EventSource
-       * - `SubscriptionHandler`: Custom subscription handler.
-       * - `ws`: Use websocket handler from package `graphql-ws`.
-       * - `sse`: Use default sse handler.
-       */
-      handler: SubscriptionHandler<SubscriptionContext>
-    }
+  handler?: GraphQLClientBuilder<ClientContext> | BuildInClientOptions
+  subscription?: UseGraphQLSubscriptionClientOptions<SubscriptionContext>
 }
 
-export type RequestHandler<Context> = <
-  TData,
-  TVars extends Record<string, unknown>,
-> (
-  query: {
-    document: TypedDocumentNode<TData, TVars>
-    variables: NoInfer<TVars>
-    type: 'query' | 'mutation'
-    url: string
-  },
-  context?: Context
-) => Promise<TData>
-
-export type SubscriptionHandler<Context> = <
-  TData,
-  TVars extends Record<string, unknown>,
-> (
-  func: {
-    update: (data: TData, isFinal?: boolean) => void
-    close: (error?: any) => void
-    onUnsubscribe: (fn: () => void) => void
-  },
-  query: {
-    document: TypedDocumentNode<TData, TVars>
-    variables: NoInfer<TVars>
-    type: 'subscription'
-    url: string
-  },
-  context?: Context
-) => void
-
-export interface UseGraphQLClientResult<Context> {
-  query: OperationClient<Context>
-  mutation: OperationClient<Context>
-  defineOperation: DefineOperation<Context>
-  defineAsyncQuery: DefineAsyncQuery<Context>
-  defineLazyAsyncQuery: DefineAsyncQuery<Context>
-  defineSubscription: DefineSubscription<Context>
+export interface UseGraphQLClientResult<ClientContext, SubscriptionContext> {
+  query: OperationClient<ClientContext>
+  mutation: OperationClient<ClientContext>
+  defineOperation: DefineOperation<ClientContext>
+  defineAsyncQuery: DefineAsyncQuery<ClientContext>
+  defineLazyAsyncQuery: DefineAsyncQuery<ClientContext>
+  defineSubscription: DefineSubscription<SubscriptionContext>
 }
 
 type OperationClientParams<TVars, Context> =
@@ -110,10 +77,14 @@ export interface OperationClient<Context> {
 
 export interface DefineOperation<Context> {
   <TData, TVars extends Record<string, unknown>>(
-    def: TypedDocumentNode<TData, TVars>,
+    document: TypedDocumentNode<TData, TVars>,
     context?: Context,
   ): DefineOperationReturn<Promise<TData>, TVars, Context>
 }
+export type DefineOperationReturn<Ret, TVars, Context> =
+  Record<string, never> extends TVars
+    ? (variables?: TVars, context?: Context) => Ret
+    : (variables: TVars, context?: Context) => Ret
 
 export interface DefineAsyncQuery<Context> {
   <
@@ -123,7 +94,7 @@ export interface DefineAsyncQuery<Context> {
     PickKeys extends KeysOf<DataT> = KeysOf<DataT>,
     DefaultT = null,
   > (
-    def: TypedDocumentNode<TData, TVars>,
+    document: TypedDocumentNode<TData, TVars>,
     context?: Context,
   ): DefineAsyncQueryReturn<
     AsyncData<PickFrom<DataT, PickKeys> | DefaultT, Error | null>,
@@ -138,7 +109,7 @@ export interface DefineAsyncQuery<Context> {
     PickKeys extends KeysOf<DataT> = KeysOf<DataT>,
     DefaultT = DataT,
   > (
-    def: TypedDocumentNode<TData, TVars>,
+    document: TypedDocumentNode<TData, TVars>,
     context?: Context,
   ): DefineAsyncQueryReturn<
     AsyncData<PickFrom<DataT, PickKeys> | DefaultT, Error | null>,
@@ -147,23 +118,10 @@ export interface DefineAsyncQuery<Context> {
   >
 }
 
-export interface DefineSubscription<Context> {
-  <TData, TVars extends Record<string, unknown>>(
-    def: TypedDocumentNode<TData, TVars>,
-    context?: Context,
-  ): DefineSubscriptionReturn<TData, TVars, Context>
-}
-
-export type DefineOperationReturn<Ret, TVars, Context> =
-  Record<string, never> extends TVars
-    ? (variables?: TVars, context?: Context) => Ret
-    : (variables: TVars, context?: Context) => Ret
-
 export type DefineAsyncQueryReturn<Ret, TVars, Options> =
   Record<string, never> extends TVars
     ? DefineAsyncQueryReturnFnE<Ret, TVars, Options>
     : DefineAsyncQueryReturnFn<Ret, TVars, Options>
-
 export interface DefineAsyncQueryReturnFn<Ret, TVars, Options> {
   (
     variables: TVars,
@@ -185,23 +143,45 @@ export interface DefineAsyncQueryReturnFnE<Ret, TVars, Options> {
   ): Ret
 }
 
-export type DefineSubscriptionReturn<Ret, TVars, Context> =
+export interface DefineSubscription<Context> {
+  <TData, TVars extends Record<string, unknown>>(
+    document: TypedDocumentNode<TData, TVars>,
+    context?: Context,
+  ): DefineSubscriptionReturn<TData, TVars, Context>
+}
+export interface UseSubscriptionOptions<Context> {
+  /**
+   * Immediately open the connection when calling this composable.
+   *
+   * @default false
+   */
+  immediate?: boolean
+
+  /**
+   * Automatically reconnect when variables changed.
+   */
+  autoConnect?: boolean
+
+  contextRewrite?: Partial<Context>
+}
+export type DefineSubscriptionReturn<TData, TVars, Context> =
   Record<string, never> extends TVars
-    ? (variables?: TVars, options?: Context) => Promise<SubscriptionReturn<Ret>>
-    : (variables: TVars, options?: Context) => Promise<SubscriptionReturn<Ret>>
+    ? (variables?: MaybeRefOrGetter<TVars>, options?: UseSubscriptionOptions<Context>) => SubscriptionReturn<TData>
+    : (variables: MaybeRefOrGetter<TVars>, options?: UseSubscriptionOptions<Context>) => SubscriptionReturn<TData>
 
 export interface SubscriptionReturn<TData> {
-  state: ComputedRef<'pending' | 'connected' | 'closed'>
-  data: ComputedRef<TData | undefined>
-  error: ComputedRef<Error | null>
-  unsubscribe: () => void
+  data: ShallowRef<TData | null | undefined>
+  status: Readonly<Ref<'connecting' | 'open' | 'closed'>>
+  errors: ShallowRef<ReadonlyArray<import('graphql').GraphQLFormattedError> | null>
+  close: () => void
   /**
-   * Close the current subscription and reconnect.
+   * Reopen the subscription connection.
+   * If the connection is already open, it will close before opening a new.
    */
-  restart: () => Promise<void>
-  /**
-   * Keep the current subscription alive and seamless switch to a new one.
-   * This is useful when you have a connection time limit.
-   */
-  refresh: () => Promise<void>
+  open: () => void
 }
+
+type RequireRefOrGetter<T = any> =
+  0 extends 1 & T
+    ? MaybeRefOrGetter<T>
+    : Exclude<MaybeRefOrGetter<T>, T>

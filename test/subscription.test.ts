@@ -11,14 +11,14 @@ test.describe('Subscription Client', () => {
   test('ws-client', async ({ page, goto }) => {
     await goto('/ws')
     await expect(
-      page.getByRole('code'),
+      page.getByTestId('countdown-value'),
     ).toHaveText('WS Countdown: 0')
 
     await page.click('#reset-btn')
 
     for (let i = 3; i >= 0; i--) {
       await expect(
-        page.getByRole('code'),
+        page.getByTestId('countdown-value'),
       ).toHaveText(`WS Countdown: ${i}`)
     }
   })
@@ -26,14 +26,14 @@ test.describe('Subscription Client', () => {
   test('sse-client', async ({ page, goto }) => {
     await goto('/sse')
     await expect(
-      page.getByRole('code'),
+      page.getByTestId('countdown-value'),
     ).toHaveText('SSE Countdown: 0')
 
     await page.click('#reset-btn')
 
     for (let i = 3; i >= 0; i--) {
       await expect(
-        page.getByRole('code'),
+        page.getByTestId('countdown-value'),
       ).toHaveText(`SSE Countdown: ${i}`)
     }
   })

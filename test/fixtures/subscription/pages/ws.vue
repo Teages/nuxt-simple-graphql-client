@@ -12,30 +12,14 @@ const useCountdown = defineSubscription(
   }]),
 )
 
-const num = ref(0)
-let cancel: () => void | undefined
-async function reset() {
-  if (cancel) {
-    cancel()
-  }
-  const countdown = await useCountdown()
-  cancel = countdown.unsubscribe
-  num.value = countdown.data.value?.countdown ?? 0
-
-  const unwatch = watch(countdown.data, (val) => {
-    if (val) {
-      num.value = val.countdown
-    }
-    if (countdown.state.value === 'closed') {
-      unwatch()
-    }
-  })
-}
+const { data, status, open: reset } = useCountdown(undefined, { immediate: false })
+const num = computed(() => data.value?.countdown ?? 0)
 </script>
 
 <template>
   <div>
-    <code id="countdown-value">WS Countdown: {{ num }}</code>
+    <code data-testid="countdown-value">WS Countdown: {{ num }}</code>
+    <code data-testid="status">WS Status: {{ status }}</code>
     <button id="reset-btn" @click="reset">
       Reset
     </button>

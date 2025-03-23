@@ -14,3 +14,5 @@ export interface TypedDocumentNode<Result = Record<string, any>, Variables = Rec
 }
 export type ResultOf<T> = T extends TypedDocumentNode<infer Result, any> ? Result : unknown
 export type VariablesOf<T> = T extends TypedDocumentNode<any, infer Variables> ? Variables : unknown
+
+export {}
